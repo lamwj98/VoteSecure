@@ -5,7 +5,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
   });
 
-const port = 3000; // or any other port you prefer
+const port = 5000; // or any other port you prefer
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
