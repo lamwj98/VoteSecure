@@ -8,17 +8,15 @@ const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 const port = 3000;
-const path = require('path');
 const Web3 = require('web3');
-const providerUrl = '';
-const web3 = new Web3(providerUrl);
+// const providerUrl = '';
+// const web3 = new Web3(providerUrl);
 
 const authenticateAdmin = require('./authMiddleware');
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 
 const uri = 'mongodb+srv://tungnd237:deptrai237@cluster0.00jyklj.mongodb.net/?retryWrites=true&w=majority';
 const client = new MongoClient(uri, {
@@ -28,11 +26,11 @@ const client = new MongoClient(uri, {
 
 let db;
 
-// Contract linkage
-const contractAbi = [];
-const contractAddress = '0x..';
+// // Contract linkage
+// const contractAbi = [];
+// const contractAddress = '0x..';
 
-const contract = new web3.eth.Contract(contractAbi, contractAddress);
+// const contract = new web3.eth.Contract(contractAbi, contractAddress);
 
 // Connect to MongoDB Atlas
 async function connectToDB() {
@@ -73,40 +71,15 @@ async function initializeDatabase() {
 initializeDatabase();
 
 
-// Serve the landing page
-app.get('/', (req, res) => {
-    const indexPath = path.join(__dirname, "..", 'frontend', 'public', 'index.html');
-    res.sendFile(indexPath);
-  });
-  
-// Serve the admin landing page
-app.get('/admin-landing', (req, res) => {
-    const adminLandingPath = path.join(__dirname, "..", 'frontend', 'public', 'admin-landing.html');
-    res.sendFile(adminLandingPath);
-});
-
-// Serve the create admin page
-app.get('/register', (req, res) => {
-    const createAdminPath = path.join(__dirname, "..",'frontend', 'public', 'create-admin.html');
-    res.sendFile(createAdminPath);
-});
-
-// // Serve the login page
-// app.get('/login', (req, res) => {
-//     const loginPath = path.join(__dirname, '..', 'frontend', 'public', 'login.html');
-//     res.sendFile(loginPath);
+// // Serve the create admin page
+// app.get('/register', (req, res) => {
+//     const createAdminPath = path.join(__dirname, "..",'frontend', 'public', 'create-admin.html');
+//     res.sendFile(createAdminPath);
 // });
-
-// Serve the create voting session page
-// app.get('/create-voting-session', (req, res) => {
-//     const createVotingSessionPath = path.join(__dirname, "..", 'frontend', 'public', 'create-voting-session.html');
-//     res.sendFile(createVotingSessionPath);
-// }); 
-
   
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-  
+
     db.collection('adminCredentials')
       .findOne({ username, password })
       .then(admin => {
@@ -171,6 +144,7 @@ app.post('/createVotingSession', authenticateAdmin, (req, res) => {
   
     session.description = description;
     session.candidates = candidates;
+
     // Assign voterIds to voters and update the key-value table
     const voterIds = {};
     const votersTable = [];
@@ -229,42 +203,42 @@ app.post('/createVotingSession', authenticateAdmin, (req, res) => {
 
 
 app.post('/startSession/:sessionId', authenticateAdmin, async (req, res) => {
-    // Check user authenticity (only admin can start)
-    
     const sessionId = req.params.sessionId
-    contract.methods.startSession(sessionId).call((error, result) => {
-        if (error) {
-            res.send(error)
-        } else {
-            res.send(result)
-        }
-    })
+    // contract.methods.startSession(sessionId).call((error, result) => {
+    //     if (error) {
+    //         res.send(error)
+    //     } else {
+    //         res.send(result)
+    //     }
+    // })
+    console.log(sessionId)
+    res.sendStatus(200)
 }); 
 
 app.post('/endSession/:sessionId', authenticateAdmin, async (req, res) => {
-    // Check user authenticity (only admin can start)
-
     const sessionId = parseInt(req.params.sessionId, 10)
-    contract.methods.endSession(sessionId).call((error, result) => {
-        if (error) {
-            res.send(error)
-        } else {
-            res.send(result)
-        }
-    })
+    // contract.methods.endSession(sessionId).call((error, result) => {
+    //     if (error) {
+    //         res.send(error)
+    //     } else {
+    //         res.send(result)
+    //     }
+    // })
+    console.log(sessionId)
+    res.sendStatus(200)
 })
 
 app.get('/isSessionOngoing/:sessionId', authenticateAdmin, async (req, res) => {
-    // Check user authenticity (only admin can start)
-
     const sessionId = parseInt(req.params.sessionId, 10)
-    contract.methods.isSessionOngoing(sessionId).call((error, result) => {
-        if (error) {
-            res.send(error)
-        } else {
-            res.send(result)
-        }
-    })
+    // contract.methods.isSessionOngoing(sessionId).call((error, result) => {
+    //     if (error) {
+    //         res.send(error)
+    //     } else {
+    //         res.send(result)
+    //     }
+    // })
+    console.log(sessionId)
+    res.sendStatus(200)
 })
 
 app.post('/vote', async (req, res) => {
@@ -318,141 +292,17 @@ app.post('/vote', async (req, res) => {
 
   
 app.get('/getResult/:sessionId', authenticateAdmin, async (req, res) => {
-    // Check user authenticity (only admin can start)
-
     const sessionId = parseInt(req.params.sessionId, 10)
-    contract.methods.getVoteResults(sessionId).call((error, result) => {
-        if (error) {
-            res.send(error)
-        } else {
-            res.send(result)
-        }
-    })
-    
+    // contract.methods.getVoteResults(sessionId).call((error, result) => {
+    //     if (error) {
+    //         res.send(error)
+    //     } else {
+    //         res.send(result)
+    //     }
+    // })
+    res.sendStatus(200)
 })
 
-// Route to create an admin
-// app.post('/admin', async (req, res) => {
-//     const { username, password } = req.body;
-  
-//     try {
-//       const admin = { username, password };
-//       const result = await db.collection('adminCredentials').insertOne(admin);
-//       console.log('Admin created:', result.insertedId);
-//       res.json({ success: true, adminId: result.insertedId });
-//     } catch (err) {
-//       console.error('Error creating admin:', err);
-//       res.status(500).json({ error: 'Failed to create admin' });
-//     }
-// });
-
-// app.listen(port, () => {
-//     console.log(`Server running on port ${port}`)
-// });
-
-/*
-const web3 = require('web3');
-
-// Connect to Ethereum network (Assuming you have an Ethereum node running on localhost)
-const web3Instance = new web3('http://localhost:8545');
-
-// Get the contract instance (replace 'your_contract_address' and 'your_contract_abi' with actual values)
-const contract = new web3Instance.eth.Contract('your_contract_abi', 'your_contract_address');
-
-// Users data - This is just for demo. In real application, use a secure database
-const users = [
-    { id: 1, username: 'admin', password: 'password', isAdmin: true },
-];
-
-const app = express();
-
-app.use(express.json());
-
-// Generate voting ticket number - single and batch
-app.post('/generateTickets', authenticateToken, (req, res) => {
-    // Your logic here
-
-
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`)
 });
-
-// Create a voting session
-app.post('/createVotingSession', authenticateToken, (req, res) => {
-    // Your logic here
-
-
-});
-
-// End a voting session
-app.post('/endVotingSession', authenticateToken, (req, res) => {
-    // Your logic here
-
-
-});
-
-// Retrieve voting session details for frontend display
-app.get('/getSessionDetails', authenticateToken, async (req, res) => {
-    // Your logic here, for example:
-    const sessionDetails = await contract.methods.getSessionDetails().call();
-    res.json(sessionDetails);
-});
-
-// Authentication for administrative login
-app.post('/authenticateUser', (req, res) => {
-    // Authenticate user
-    const user = users.find(user => user.username === req.body.username && user.password === req.body.password);
-
-    if (user) {
-        // Create a token
-        const accessToken = jwt.sign({ id: user.id, isAdmin: user.isAdmin }, 'your_jwt_secret');
-        res.json({ accessToken });
-    } else {
-        res.sendStatus(401);
-    }
-});
-
-
-// Logging out of administrative user
-app.post('/logoutUser', (req, res) => {
-    // Your logic here
-
-
-
-});
-
-// Vote - this part will do the writing into smart contract
-app.post('/poll', authenticateToken, async (req, res) => {
-    // Your logic here, for example:
-    const voteResult = await contract.methods.vote(req.body.candidateId).send({ from: 'your_ethereum_address' });
-    res.json(voteResult);
-
-
-});
-
-// Get voting results
-app.get('/getVotingResults', authenticateToken, async (req, res) => {
-    // Your logic here, for example:
-    const votingResults = await contract.methods.getVotingResults().call();
-    res.json(votingResults);
-
-
-    
-});
-
-function authenticateToken(req, res, next) {
-    // Check if token exists
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (token == null) return res.sendStatus(401);
-
-    // Verify token
-    jwt.verify(token, 'your_jwt_secret', (err, user) => {
-        if (err) return res.sendStatus(403);
-        req.user = user;
-        next();
-    });
-}
-*/
-
-
-
