@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
+
 const { MONGO_URI } = process.env;
 
 exports.connect = () => {
   // Connecting to the database
   mongoose
-    .connect(MONGO_URI, {
-    })
+    .connect("mongodb+srv://tungnd237:deptrai237@cluster0.00jyklj.mongodb.net/?retryWrites=true&w=majority" 
+    )
     .then(() => {
       console.log("Successfully connected to database");
     })
