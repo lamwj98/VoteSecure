@@ -6,10 +6,6 @@ exports.connect = () => {
   // Connecting to the database
   mongoose
     .connect("mongodb+srv://tungnd237:deptrai237@cluster0.00jyklj.mongodb.net/?retryWrites=true&w=majority", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
     })
     .then(() => {
       console.log("Successfully connected to database");

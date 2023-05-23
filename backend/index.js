@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
 const bodyParser = require("body-parser");
 const TOKEN_KEY = 'eda059d2';
 const mongoose = require("mongoose");
+require('dotenv').config();
+
 
 
 const User = require("./model/user");
@@ -27,40 +30,11 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const uri = 'mongodb+srv://tungnd237:deptrai237@cluster0.00jyklj.mongodb.net/?retryWrites=true&w=majority';
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// index.js
+const { connect } = require('./config/database');
 
-let db;
+connect();
 
-// // Contract linkage
-// const contractAbi = [];
-// const contractAddress = '0x..';
-
-// const contract = new web3.eth.Contract(contractAbi, contractAddress);
-
-// Connect to MongoDB Atlas
-async function connectToDB() {
-  try {
-    await client.connect();
-    db = client.db('votingAppDB');
-    console.log('Connected to MongoDB Atlas');
-  } catch (err) {
-    console.error('Error connecting to MongoDB Atlas:', err);
-    process.exit(1);
-  }
-}
-
-// Close the MongoDB connection when the app shuts down
-function closeDBConnection() {
-  client.close();
-  console.log('Closed MongoDB Atlas connection');
-}
-
-// Call the connectToDB function to establish the database connection
-connectToDB();
 
 
 // // Serve the create admin page
@@ -84,10 +58,11 @@ app.post("/register", async (req, res) => {
     // check if user already exist
     // Validate if user exist in our database
     const oldUser = await User.findOne({ username });
-
+    
     if (oldUser) {
       return res.status(409).send("User Already Exist. Please Login");
     }
+
 
     //Encrypt user password
     encryptedPassword = await bcrypt.hash(password, 10);
@@ -100,7 +75,7 @@ app.post("/register", async (req, res) => {
 
     // Create token
     const token = jwt.sign(
-      { user_id: user._id, email },
+      { user_id: user._id, username },
       TOKEN_KEY,
       {
         expiresIn: "2h",
@@ -125,7 +100,7 @@ app.post("/login", async (req, res) => {
 
     // Validate user input
     if (!(username && password)) {
-      res.status(400).send("All input is required");
+      return res.status(400).send("All input is required");
     }
     // Validate if user exist in our database
     const user = await User.findOne({ username });
@@ -133,7 +108,7 @@ app.post("/login", async (req, res) => {
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
       const token = jwt.sign(
-        { user_id: user._id, email },
+        { user_id: user._id, username },
         TOKEN_KEY,
         {
           expiresIn: "2h",
@@ -144,14 +119,16 @@ app.post("/login", async (req, res) => {
       user.token = token;
 
       // user
-      res.status(200).json(user);
+      return res.status(200).json(user);
+    } else {
+      return res.status(400).send("Invalid Credentials");
     }
-    res.status(400).send("Invalid Credentials");
   } catch (err) {
     console.log(err);
   }
   // Our register logic ends here
 });
+
 
 app.post('/logout', (req, res) => {
     // Clear the JWT token from the client-side (e.g., cookies or local storage)
@@ -199,7 +176,7 @@ app.post('/createVotingSession', auth, (req, res) => {
 
       const numVoters = voters.length;
       const candidateNames = candidates.map(candidate => candidate.name);
-
+      
       contract.methods.createSession(numVoters, candidateNames).call((error, sessionId) => {
         if (error) {
           console.error('Error creating session:', error);
