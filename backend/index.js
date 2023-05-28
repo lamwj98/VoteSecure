@@ -117,6 +117,16 @@ app.post('/createVotingSession', auth, (req, res) => {
   })
 });
 
+app.get('/votingSessions', async (req, res) => {
+  try {
+    const votingSessions = await VotingSession.find({}).exec();
+    res.status(200).json(votingSessions.json());
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+
+})
+
 app.post('/vote', async (req, res) => {
   const { voterId, sessionId, candidateName } = req.body;
 
