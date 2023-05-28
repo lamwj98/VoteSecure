@@ -37,7 +37,7 @@ contract Ballot {
         candidateSessionCount = 0;
     }
 
-    function createSession(uint numberOfVoters, string[] memory candidateNames) public returns (uint) {
+    function createSession(uint numberOfVoters, string[] memory candidateNames) public {
         sessionCount++;
         candidateSessionCount++;
         VotingSession storage session = sessions[sessionCount];
@@ -54,7 +54,9 @@ contract Ballot {
         for (uint i = 0; i < numberOfVoters; i++) {
             session.voters[i] = Voter(false, 0);
         }
+    }
 
+    function getSessionId() public view returns (uint256) {
         return sessionCount;
     }
 
