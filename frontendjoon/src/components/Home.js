@@ -31,14 +31,13 @@ export default class Home extends Component {
                     <Row>
                         <Card className="text-center bg-secondary text-white py-2">
                         <Card.Body>
-                            Select one of the options below to do something
+                            Select one of the options below
                         </Card.Body>
                         </Card>
                     </Row>
                     <Row className="my-5">
                         <Col>
                         <Card style={{ width: '25rem' }}>
-                            <Card.Img variant="top" src="https://dummyimage.com/500x300/000/fff.jpg&text=IMAGE" />
                             <Card.Body>
                             <Card.Title>Start Session</Card.Title>
                             <Card.Text>
@@ -52,7 +51,6 @@ export default class Home extends Component {
                         </Col>
                         <Col>
                         <Card style={{ width: '25rem' }}>
-                            <Card.Img variant="top" src="https://dummyimage.com/500x300/000/fff.jpg&text=IMAGE" />
                             <Card.Body>
                             <Card.Title>Participate</Card.Title>
                             <Card.Text>
@@ -66,7 +64,6 @@ export default class Home extends Component {
                         </Col>
                         <Col>
                         <Card style={{ width: '25rem' }}>
-                            <Card.Img variant="top" src="https://dummyimage.com/500x300/000/fff.jpg&text=IMAGE" />
                             <Card.Body>
                             <Card.Title>Vote Results</Card.Title>
                             <Card.Text>
