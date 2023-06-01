@@ -1,6 +1,7 @@
 import './Login.css'
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import Axios from "axios"
+import { AuthContext } from './AuthContext';
 
 export default function Login() {
 
@@ -9,6 +10,11 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const { isLoggedIn, login } = useContext(AuthContext);
+
+  const handleloggedin = () => {
+    login();
+  };
 
 
   let [authMode, setAuthMode] = useState("signin")
@@ -31,6 +37,8 @@ export default function Login() {
       username: username,
       password: password,
     }).then((response) => {
+      const token = response.data.token;
+      localStorage.setItem('token', token)
       setMessage(response.data.message)
     });
   };
@@ -89,6 +97,9 @@ export default function Login() {
   //     console.error('An error occurred during login:', error);
   //   }
   // };
+  if (isLoggedIn) {
+    return <h2>You are logged in</h2> 
+  }
 
   if (authMode === "signin") {
     return (
@@ -108,7 +119,7 @@ export default function Login() {
                 type="text"
                 className="form-control mt-1"
                 placeholder="Enter username"
-                onChange={(e) => setUsernameReg(e.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div className="form-group mt-3">
@@ -117,11 +128,11 @@ export default function Login() {
                 type="password"
                 className="form-control mt-1"
                 placeholder="Enter password"
-                onChange={(e) => setPasswordReg(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div className="d-grid gap-2 mt-3">
-              <button type="submit" className="btn btn-primary" onClick={handleRegister}>
+              <button type="submit" className="btn btn-primary" onClick={()=> {handleLogin(); handleloggedin(); }}>
                 Submit
               </button>
             </div>
@@ -148,7 +159,7 @@ export default function Login() {
               type="text"
               className="form-control mt-1"
               placeholder="Username"
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setUsernameReg(e.target.value)}
             />
           </div>
           <div className="form-group mt-3">
@@ -157,11 +168,11 @@ export default function Login() {
               type="password"
               className="form-control mt-1"
               placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPasswordReg(e.target.value)}
             />
           </div>
           <div className="d-grid gap-2 mt-3">
-            <button type="submit" className="btn btn-primary" onClick={handleLogin}> 
+            <button type="submit" className="btn btn-primary" onClick={handleRegister}> 
               Submit
             </button>
           </div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Card, Row, Col, Container, Image,  } from "react-bootstrap";
 import { Link } from 'react-router-dom'
+import './home.css'
 
 export default class Home extends Component {
     render(){
@@ -11,7 +12,7 @@ export default class Home extends Component {
                     <Row className="px-4 my-5">
                         <Col sm={7}>
                         <Image
-                        src = "https://dummyimage.com/700x250/000/fff.jpg&text=LOGO"
+                        src = "/votesecure.png"
                         fluid
                         rounded
                         />
@@ -29,7 +30,7 @@ export default class Home extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Card className="text-center bg-secondary text-white py-2">
+                        <Card className="text-center main-theme text-black py-2">
                         <Card.Body>
                             Select one of the options below
                         </Card.Body>
@@ -70,7 +71,7 @@ export default class Home extends Component {
                                 Track vote counts for all active voting sessions live and check
                                 results for all previous sessions
                             </Card.Text>
-                            <Link to ={"/Results"}>
+                            <Link to ={"/List"}>
                             <Button variant="outline-primary">View Results</Button>
                             </Link>
                             </Card.Body>
