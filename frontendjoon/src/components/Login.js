@@ -1,6 +1,8 @@
 import './Login.css'
 import React, { useState, useContext } from "react"
 import Axios from "axios"
+import { Link } from 'react-router-dom'
+import { Button } from 'react-bootstrap';
 import { AuthContext } from './AuthContext';
 
 export default function Login() {
@@ -98,7 +100,14 @@ export default function Login() {
   //   }
   // };
   if (isLoggedIn) {
-    return <h2>You are logged in</h2> 
+    return (
+    <div>
+      <h2>You are logged in</h2>
+      <Link as={Link} to ={"/Admin"}>
+          <Button  variant="primary">Go to Admin Page</Button>
+      </Link>
+    </div>
+    ) 
   }
 
   if (authMode === "signin") {

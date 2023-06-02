@@ -22,7 +22,7 @@ export const pollsMockData = [
         description: 'This is poll number 4',
         candidates: ['Candidate 1', 'Candidate 2', 'Candidate 3'],
         voters: ['Voter 1', 'Voter 2', 'Voter 3']
-    }
+    }   
 ]
 
 export const resultsMockData = [
