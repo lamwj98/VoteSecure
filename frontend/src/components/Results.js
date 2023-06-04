@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from "react-router-dom"
-import { resultsMockData } from './MockData';
 import { Table } from 'react-bootstrap';
 import VoteData from './voteData';
+import Axios from 'axios'
 
 export default function Results() {
-    const [data, setData] = useState(resultsMockData);
+    const [data, setData] = useState();
 
     let params = useParams();
-    console.log(params);
 
-    
-
-    // useEffect(() => {
-    //     const fetchStatus = async () => {
-    //       const response = await fetch(`http://localhost:3000/getResult/${params.sessionId}`);
-    //       const jsonResult = await response.json();
-    //       setData(jsonResult);
-    //     };
-    //     fetchStatus();
-    //   }, []);
-
+    useEffect(() => {
+        Axios.get(`http://localhost:3000/getResult/${params.sessionId}`, {
+        }).then((response) => {
+          setData(response.data)
+        }).catch(err => console.log(err));
+    }, [])
 
     return (
         <Table striped bordered hover>
@@ -31,7 +25,7 @@ export default function Results() {
             </tr>
         </thead>
         <tbody>
-            <VoteData users={data}/>
+            {data && <VoteData users={data}/>}
         </tbody>
         </Table>
     )

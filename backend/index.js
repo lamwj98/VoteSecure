@@ -26,6 +26,9 @@ const contract = new web3.eth.Contract(contractAbi, contractBytecode);
 const auth = require("./middleware/auth");
 
 app.use(express.json());
+app.use(cors({
+  origin: '*'
+}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -143,7 +146,7 @@ app.post('/vote', async (req, res) => {
     const actualVoterId = matchedVoter.voterId;
 
     await contract.methods.vote(sessionId, actualVoterId, candidateName).send({from: SENDER_ADDRESS})
-      .then((error, result) => {
+      .then((result, error) => {
         if (error) {
           console.log(error)
           res.status(400).send(error);
@@ -157,7 +160,7 @@ app.post('/vote', async (req, res) => {
   }
 );
 
-app.get('/isSessionOngoing/:sessionId', auth, async (req, res) => {
+app.get('/isSessionOngoing/:sessionId', async (req, res) => {
   const sessionId = parseInt(req.params.sessionId, 10)
   await contract.methods.isSessionOngoing(sessionId).call((error, result) => {
       if (error) {
@@ -182,9 +185,9 @@ app.get('/getResult/:sessionId', async (req, res) => {
 app.post('/endSession/:sessionId', auth, async (req, res) => {
   const sessionId = parseInt(req.params.sessionId, 10)
   await contract.methods.endSession(sessionId).send({from: SENDER_ADDRESS})
-    .then((error, result) => {
+    .then((result, error) => {
         if (error) {
-            res.status(400).end(error)
+            res.status(400).send(error)
         } else {
             res.status(200).send(result)
         }
@@ -193,9 +196,9 @@ app.post('/endSession/:sessionId', auth, async (req, res) => {
 )
 
 app.post('/startSession/:sessionId', auth, async (req, res) => {
-  const sessionId = req.params.sessionId
+  const sessionId = parseInt(req.params.sessionId, 10)
   await contract.methods.startSession(sessionId).send({from: SENDER_ADDRESS})
-    .then((error, result) => {
+    .then((result, error) => {
         if (error) {
             res.status(400).send(error)
         } else {

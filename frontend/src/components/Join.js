@@ -1,47 +1,53 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom"
-import { Form, Button, Container, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap'
+import { Form, Button, Container, Row, Col, Dropdown } from 'react-bootstrap'
 import Axios from 'axios'
-import { pollsMockData } from './MockData';
+import { useLocation } from 'react-router-dom';
 
 export default function Join() {
 
-  let params = useParams();
-  let pollID = parseInt(params.sessionId)
-  console.log(params);
+  const location = useLocation();
+  const params = useParams();
+  const [onGoing, setOngoing] = useState(true)
+  const candidates = location.state?.candidates
 
+  useEffect(() => {
+    Axios.get(`http://localhost:3000/isSessionOngoing/${params.sessionId}`, {
+    }).then((response) => {
+      setOngoing(response.data)
+    }).catch(err => console.log(err));
+  }, [])
 
   const [voterId, setVoter] = useState('');
-  const [data, setData] = useState(pollsMockData/*replace with []*/)
-  const sessionId = params.sessionId
-  const [message, setMessage] = useState('');
   const [selectedName, setSelectedName] = useState('')
 
-  const session = data.find((session) => session.sessionId === pollID)
-  const candidates = session ? session.candidates : [];
+  const handleVote = (event) => {
+    event.preventDefault()
+    if (selectedName && voterId) {
+      Axios.post("http://localhost:3000/vote", {
+        voterId: voterId,
+        sessionId: params.sessionId,
+        candidateName: selectedName,
+      }).then(() => {
+        window.alert("Successfully voted")
+      }).catch((err) => {
+        window.alert("Voting failed. Either voted or voter does not exist!")
+      })
+    } else {
+      window.alert("Missing fields")
+    }
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const result = await fetch("http://localhost:3000/votingSessions");
-  //     const jsonResult = await result.json();
-  //     setData(jsonResult);
-  //   };
-  //   fetchData();
-  // }, []);
-
-  const handleVote = () => {
-    Axios.post("http://localhost:3000/vote", {
-      voterId: voterId,
-      sessionId: pollID,
-      candidateName: selectedName,
-    }).then((response) => {
-      setMessage(response.data.message)
-    });
   }
 
   const handleSelect = (value) => {
     setSelectedName(value);
   };
+
+  if (!onGoing) {
+    <Container>
+      <h1>Vote session not ongoing!</h1>
+    </Container>
+  }
 
   return (
     <Container>
@@ -54,7 +60,6 @@ export default function Join() {
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Select a Candidate</Form.Label>
-              {/* <Form.Control type="text" placeholder="Enter Candidate Name you are voting for" onChange={(e) => setName(e.target.value)}/> */}
               <Dropdown onSelect={handleSelect}>
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
                   {selectedName ? selectedName : 'Select a Value'}
@@ -66,11 +71,9 @@ export default function Join() {
                 </Dropdown.Menu>
               </Dropdown>
             </Form.Group>
-
-            <Button className='mt-4' variant="primary" type="submit" onClick={handleVote}>
+            <Button className='mt-4' variant="primary" type="submit" onClick={(event) => handleVote(event)}>
               Vote!
             </Button>
-            <h3>{message}</h3>
           </Form>
         </Col>
       </Row>
