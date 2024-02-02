@@ -6,7 +6,7 @@ exports.connect = () => {
   // Connecting to the database
 
   mongoose
-    .connect("mongodb+srv://admin2:UZyzSrEGxovGDxmW@cluster0.aw8wdwb.mongodb.net/?retryWrites=true&w=majority" 
+    .connect("mongodb+srv://tungtorres23:root@cluster0.a7pdjye.mongodb.net/?retryWrites=true&w=majority" 
     )
     .then(() => {
       console.log("Successfully connected to database");
